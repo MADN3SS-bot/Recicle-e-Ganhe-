@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Reciclagem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #666666;
+            text-align: center;
+        }
+        .profile-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: gray;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+        .score {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: green;
+        }
+        .recycle-buttons {
+            margin: 50px;
+        }
+        .recycle-button {
+            padding: 20px;
+            margin: 10px;
+            border: 2px solid gray;
+            background-color: lightgray;
+            cursor: pointer;
+        }
+        .leaderboard {
+            margin-top: 30px;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="score">Pontos: <span id="score">0</span></div>
+
+    <div class="profile-circle" id="profileCircle" onclick="openProfile()">
+        <img id="profileImage" src="" alt="Profile" style="width: 100%; height: 100%; border-radius: 50%;">
+    </div>
+
+    <h1>Escolha um objeto para reciclar!</h1>
+
+    <div class="recycle-buttons">
+        <button class="recycle-button" onclick="addPoints(10)">Lata de Alumínio (10 pontos)</button>
+        <button class="recycle-button" onclick="addPoints(20)">Garrafa Plástica (20 pontos)</button>
+        <button class="recycle-button" onclick="addPoints(30)">Papelão (30 pontos)</button>
+        <!-- Adicione mais botões de objetos recicláveis aqui -->
+    </div>
+
+    <div class="leaderboard">
+        <h2>Melhores Jogadores</h2>
+        <ul id="leaderboard">
+            <!-- A lista de jogadores será preenchida dinamicamente -->
+        </ul>
+    </div>
+
+    <!-- Modal para editar o perfil -->
+    <div id="profileModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background-color: white; padding:20px; border:1px solid gray;">
+        <h2>Editar Perfil</h2>
+        <input type="text" id="playerName" placeholder="Nome">
+        <input type="file" id="uploadImage" accept="image/*">
+        <button onclick="saveProfile()">Salvar</button>
+        <button onclick="closeProfile()">Fechar</button>
+    </div>
+
+    <script>
+        let score = 0;
+        let leaderboard = [];
+
+        function addPoints(points) {
+            score += points;
+            document.getElementById('score').innerText = score;
+        }
+
+        function openProfile() {
+            document.getElementById('profileModal').style.display = 'block';
+        }
+
+        function closeProfile() {
+            document.getElementById('profileModal').style.display = 'none';
+        }
+
+        function saveProfile() {
+            const name = document.getElementById('playerName').value;
+            const file = document.getElementById('uploadImage').files[0];
+
+            if (name) {
+                // Atualiza o nome do jogador
+                leaderboard.push({ name: name, score: score });
+                updateLeaderboard();
+            }
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('profileImage').src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+
+            closeProfile();
+        }
+
+        function updateLeaderboard() {
+            const leaderboardElement = document.getElementById('leaderboard');
+            leaderboardElement.innerHTML = '';  // Limpa a lista antiga
+            leaderboard.sort((a, b) => b.score - a.score);  // Ordena pela pontuação
+
+            leaderboard.forEach(player => {
+                const li = document.createElement('li');
+                li.innerText = `${player.name} - ${player.score} pontos`;
+                leaderboardElement.appendChild(li);
+            });
+        }
+    </script>
+
+</body>
+</html>
